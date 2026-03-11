@@ -14,13 +14,19 @@ SecondChallenge::SecondChallenge()
       "scan", hz_, std::bind(&SecondChallenge::scan_callback, this, std::placeholders::_1));
 
     // firstで使用したグローバル変数の定義にtimerを追加
+    using namespace std::chrono_literals;
+    timer_ = this->create_wall_timer(100ms, std::bind(&SecondChallenge::timer_callback, this)); 
 }
 
 void SecondChallenge::timer_callback()
 {
     // 繰り返したい関数を定義
     // 距離を判定して、速度をセットしパブリッシュする
-    set_cmd_vel();
+    if (can_move()) {
+        set_cmd_vel();
+    } else {
+        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000, "Waiting for scan data...");
+    }
 }
 
 void SecondChallenge::scan_callback(const sensor_msgs::msg::LaserScan::SharedPtr msg)
@@ -36,7 +42,7 @@ bool SecondChallenge::can_move()
 
 bool SecondChallenge::is_goal()
 {
-    return calc_distance() >= goal_dist_;
+    return calc_distance() <= goal_dist_;
 }
 
 double SecondChallenge::calc_distance()

@@ -1,5 +1,5 @@
-#ifndef FIRST_CHALLENGE_HPP
-#define FIRST_CHALLENGE_HPP
+#ifndef SECOND_CHALLENGE_HPP
+#define SECOND_CHALLENGE_HPP
 
 #include <geometry_msgs/msg/twist.hpp>
 #include <sensor_msgs/msg/laser_scan.hpp>
@@ -8,6 +8,7 @@
 #include <functional>  // bind & placeholders用
 #include <memory>      // SharedPtr用
 #include <optional>    // has_value()用
+#include <chrono>      // 時間を扱うために追加
 
 class SecondChallenge : public rclcpp::Node
 {
@@ -36,6 +37,7 @@ class SecondChallenge : public rclcpp::Node
         // Pub & Sub
         rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr scan_sub_;   // scan
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;  // 制御入力
+        rclcpp::TimerBase::SharedPtr timer_;  // タイマー
 };
 
 #endif  // SECOND_CHALLENGE_HPP
